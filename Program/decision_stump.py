@@ -27,18 +27,18 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         self.root = self._grow_tree(X, y)
         return self
 
-    def _grow_tree(self, X, y, depth=0):
+    def _grow_tree(self, X, y, depth=0):    #tworzenie drzewa, u nas drzewo jest z jedna decyzja, jeden poziom glebokosci, dlatego tez depth = 1 i tylko raz zbuduje rozgalezienia (dwa liscie)
         n_samples, n_feats = X.shape
         n_labels = len(np.unique(y))
 
-        # check the stopping criteria
+        # sprawdzanie kryterium budowania drzewa (drzewo z jedna decyzja bedzie)
         if (depth>=self.max_depth or n_labels==1 or n_samples<self.min_samples_split):
             leaf_value = self._most_common_label(y)
             return Node(value=leaf_value)
 
         feat_idxs = np.random.choice(n_feats, self.n_features, replace=False)
 
-        # find the best split
+        # znalezienie najlepszy podzial na te *liscie*
         best_feature, best_thresh = self._best_split(X, y, feat_idxs)
 
         # create child nodes
@@ -56,7 +56,7 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
             thresholds = np.unique(X_column)
 
             for thr in thresholds:
-                # calculate the information gain
+                # obliczanie zysku informacji (im wiekszy tym lepszy jest ten klasyfikator - drzewo)
                 gain = self._information_gain(y, X_column, thr)
 
                 if gain > best_gain:
@@ -67,22 +67,22 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         return split_idx, split_threshold
 
     def _information_gain(self, y, X_column, threshold):
-        # parent entropy
+        # entropia rodzica
         parent_entropy = self._entropy(y)
 
-        # create children
+        # tworzenie dzieci do entropii
         left_idxs, right_idxs = self._split(X_column, threshold)
 
         if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
         
-        # calculate the weighted avg. entropy of children
+        # obliczanie wag wartosci entropii dzieci
         n = len(y)
         n_l, n_r = len(left_idxs), len(right_idxs)
         e_l, e_r = self._entropy(y[left_idxs]), self._entropy(y[right_idxs])
         child_entropy = (n_l/n) * e_l + (n_r/n) * e_r
 
-        # calculate the IG
+        # obliczanie zysku informacyjnego
         information_gain = parent_entropy - child_entropy
         return information_gain
 
