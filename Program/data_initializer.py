@@ -16,10 +16,10 @@ class DataInitializer():
     def prepare_real_data(self, input_file: str):
         pass 
     
-    def get_x_data(self):
+    def get_x_data_copy(self):
         return self.data_x.copy()
     
-    def get_y_data(self):
+    def get_y_data_copy(self):
         return self.data_y.copy()
 
     
