@@ -41,7 +41,7 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         # znalezienie najlepszy podzial na te *liscie*
         best_feature, best_thresh = self._best_split(X, y, feat_idxs)
 
-        # create child nodes
+        # create child nodes - nie wiem czy ta czesc jest wgl potrzeban bo chyba nie ma tworzenia child node'ow, ale tez sie chyba nie stworza majac warunek ze tylko 1 poziom zrobi
         left_idxs, right_idxs = self._split(X[:, best_feature], best_thresh)
         left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth+1)
         right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth+1)
