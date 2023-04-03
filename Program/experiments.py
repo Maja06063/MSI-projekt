@@ -53,7 +53,7 @@ class Experiments():
             if "1" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm Random Stumps")
-                random_stumps_algorithm = RandomStumps()
+                random_stumps_algorithm = RandomStumps(len(x_train[0]))
                 random_stumps_algorithm.fit(x_train,y_train)
                 y_predict = random_stumps_algorithm.predict(x_test)
                 score = accuracy_score(y_test,y_predict)
