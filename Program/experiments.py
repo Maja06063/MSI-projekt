@@ -53,18 +53,23 @@ class Experiments():
             if "1" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm Random Stumps")
-                random_stumps_algorithm = RandomStumps(len(x_train[0]))
+                
+                n_classes = max(y_train) + 1
+                random_stumps_algorithm = RandomStumps(n_classes)
                 random_stumps_algorithm.fit(x_train,y_train)
                 y_predict = random_stumps_algorithm.predict(x_test)
+                
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji Random Stumps wynosi:"+str(score))
 
             if "2" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm boosting")
+                
                 boosting_algorithm = self.ref_methods.boosting
                 boosting_algorithm.fit(x_train,y_train)
                 y_predict = boosting_algorithm.predict(x_test)
+                
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji Boosting wynosi:"+str(score))
                
@@ -72,17 +77,21 @@ class Experiments():
             if "3" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm bagging")
+                
                 bagging_algorithm = self.ref_methods.bagging
                 bagging_algorithm.fit(x_train,y_train)
                 y_predict = bagging_algorithm.predict(x_test)
+                
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji Bagging wynosi:"+str(score))
 
             if "4" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm regresji logistycznej")
+                
                 log_reg_algorithm = self.ref_methods.logistic_regression
                 log_reg_algorithm.fit(x_train,y_train)
                 y_predict = log_reg_algorithm.predict(x_test)
+                
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji regresji logistycznej wynosi:"+str(score))

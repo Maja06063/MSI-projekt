@@ -5,7 +5,7 @@ from collections import Counter
 from decision_stump import DecisionStump
 
 class RandomStumps (BaseEstimator, ClassifierMixin):
-    def __init__(self, n_stumps, max_depth=1, min_samples_split=2, n_feature=None):
+    def __init__(self, n_stumps=2, max_depth=1, min_samples_split=2, n_feature=None):
         self.n_stumps = n_stumps
         self.max_depth=max_depth
         self.min_samples_split=min_samples_split
