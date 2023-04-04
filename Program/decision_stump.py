@@ -51,33 +51,34 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
             leaf_value = self.most_common_label(y)
             return Node(value=leaf_value)
 
-        feature_idxs = np.random.choice(n_feature, self.n_features, replace=False)
+        feature_idxs = np.random.choice(n_feature, self.n_features, replace=False) # wybieranie randomowo cech, tak by sie nie powtarzaly
 
         # znalezienie najlepszy podzial na te *liscie*
         best_feature, best_thresh = self.best_split(X, y, feature_idxs)
 
-        # create child nodes - stworzy sie tylko jakby jedno rozgalezienie (ze ten decyzyjny node i jedno na lewo i na prawo decyzja)
+        # tworzenie rozgalezien w drzewie (stowrzy sie tylko jedno lewo, prawo, bo jeden poziom decyzji)
         left_idxs, right_idxs = self.split(X[:, best_feature], best_thresh)
         left = self.grow_stump(X[left_idxs, :], y[left_idxs], depth+1)
         right = self.grow_stump(X[right_idxs, :], y[right_idxs], depth+1)
         return Node(best_feature, best_thresh, left, right)
 
+    # znajdowanie najlepszego podzialu 
     def best_split(self, X, y, feature_idxs):
-        best_gain = -1
+        best_gain = -1  
         split_idx, split_threshold = None, None
 
         for feature_idx in feature_idxs:
             X_column = X[:, feature_idx]
             thresholds = np.unique(X_column)
 
-            for thr in thresholds:
-                # obliczanie zysku informacji (im wiekszy tym lepszy jest ten klasyfikator - drzewo)
-                gain = self.information_gain(y, X_column, thr)
+            for threshold in thresholds:
+                # obliczanie zysku informacji (im wiekszy tym lepszy jest ten klasyfikator - drzewo/ decyzja)
+                gain = self.information_gain(y, X_column, threshold)
 
                 if gain > best_gain:
                     best_gain = gain
                     split_idx = feature_idx
-                    split_threshold = thr
+                    split_threshold = threshold
 
         return split_idx, split_threshold
 
@@ -91,24 +92,24 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
 
-        # obliczanie wag wartosci entropii dzieci
+        # obliczanie sredniej wazonej entropii dzieci
         n = len(y)
-        n_l, n_r = len(left_idxs), len(right_idxs)
-        e_l, e_r = self.entropy(y[left_idxs]), self.entropy(y[right_idxs])
-        child_entropy = (n_l/n) * e_l + (n_r/n) * e_r
+        n_left, n_right = len(left_idxs), len(right_idxs)
+        e_left, e_right = self.entropy(y[left_idxs]), self.entropy(y[right_idxs])
+        children_entropy = (n_left/n) * e_left + (n_right/n) * e_right
 
-        # obliczanie zysku informacyjnego
-        information_gain = parent_entropy - child_entropy
+        # obliczanie zysku informacyjnego IG = entropy(parent) - [weighted average] * entropy(children)
+        information_gain = parent_entropy - children_entropy
         return information_gain
 
     def split(self, X_column, split_thresh):
-        left_idxs = np.argwhere(X_column <= split_thresh).flatten()
+        left_idxs = np.argwhere(X_column <= split_thresh).flatten() # szukanie wartosci i *splaszacznie* ich
         right_idxs = np.argwhere(X_column > split_thresh).flatten()
         return left_idxs, right_idxs
 
-    def entropy(self, y):
-        hist = np.bincount(y)
-        ps = hist / len(y)
+    def entropy(self, y):  # wzor na entropie: E= - suma p(X) * log_2(p(X)), gdzie p(X)= ile razy x sie pojawilo / ilosc wartosci
+        hist = np.bincount(y)   #bincount taki histogram, ile razy sie dana wartosc pojawila
+        ps = hist / len(y)  # p(x)
         return -np.sum([p * np.log(p) for p in ps if p>0])
 
 
