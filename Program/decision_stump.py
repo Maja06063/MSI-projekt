@@ -121,6 +121,7 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
     def predict(self, X):
         return np.array([self.traverse_stump(x, self.root) for x in X])
 
+    #sprawdzanie node'ow w drzewie
     def traverse_stump(self, x, node):
         if node.is_leaf_node():
             return node.value
