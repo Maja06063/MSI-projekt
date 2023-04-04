@@ -4,25 +4,35 @@ import numpy as np
 from collections import Counter
 
 # node'y (pola decyzji - takie if'y gdzie nastepuje podzial zbioru- w pniu tylko jeden taki Node)
+
+"""
+Klasa Node definiuje gałęzie (liście) drzewa DecisionStump.
+W RandomStumpie mamy pewną ilość DecisionStumpów, a każdy DecisionStump ma w sobie pewną ilość Nodów.
+"""
+
 class Node:
     def __init__(self, feature=None, threshold=None, left=None, right=None,*,value=None): #* powoduje ze trzeba zrobic Node.value
         self.feature = feature
         self.threshold = threshold  #prog decyzyjny przy ktorym koniec decyzji o podziale
         self.left = left
         self.right = right
-        self.value = value 
-        
+        self.value = value
+
     def is_leaf_node(self): #sprawdzanie czy ten node jest lisciem
         return self.value is not None
 
+"""
+Klasa DecisionStump definiuje stumpy (pojedyncze drzewa) potrzebne do algorytmu RandomStumps.
+"""
+
 class DecisionStump (BaseEstimator, ClassifierMixin):
-    
+
     def __init__(self, min_samples_split=2, max_depth=1, n_features=None):
         self.min_samples_split=min_samples_split
         self.max_depth=max_depth
         self.n_features=n_features #randomowosc przy podzbiorach
         self.root=None
-        
+
     def fit(self, X, y):
         self.n_features = X.shape[1] if not self.n_features else min(X.shape[1],self.n_features)
         self.root = self._grow_tree(X, y)
@@ -76,7 +86,7 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
 
         if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
-        
+
         # obliczanie wag wartosci entropii dzieci
         n = len(y)
         n_l, n_r = len(left_idxs), len(right_idxs)
