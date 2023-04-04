@@ -35,14 +35,14 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
 
     def fit(self, X, y):
         self.n_features = X.shape[1] if not self.n_features else min(X.shape[1],self.n_features)
-        self.root = self._grow_tree(X, y)
+        self.root = self._grow_stump(X, y)
         return self
 
     """
     Important!
     Tutaj jest właśnie problem, czy chcemy mieć depth=0, czy depth=1???
     """
-    def _grow_tree(self, X, y, depth=0):    #tworzenie drzewa, u nas drzewo jest z jedna decyzja, jeden poziom glebokosci, tylko raz zbuduje rozgalezienia (dwa liscie)
+    def _grow_stump(self, X, y, depth=0):    #tworzenie drzewa, u nas drzewo jest z jedna decyzja, jeden poziom glebokosci, dlatego tez depth = 1 i tylko raz zbuduje rozgalezienia (dwa liscie)
         n_samples, n_feats = X.shape
         n_labels = len(np.unique(y))
 
@@ -53,13 +53,13 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
 
         feat_idxs = np.random.choice(n_feats, self.n_features, replace=False)
 
-        # znalezienie najlepszy podzial na te *liscie*
+        # znalezienie najlepszy podzial na *liscie*
         best_feature, best_thresh = self._best_split(X, y, feat_idxs)
 
-        # stworzenie rozgalezien,  z warunkiem stworzy sie tylko 1 poziom *drzewa* (pnia)
+        # stworzy sie jedno rozgalezienie (ze ten decyzyjny node i jedno na lewo i na prawo decyzja)
         left_idxs, right_idxs = self._split(X[:, best_feature], best_thresh)
-        left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth+1)
-        right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth+1)
+        left = self._grow_stump(X[left_idxs, :], y[left_idxs], depth+1)
+        right = self._grow_stump(X[right_idxs, :], y[right_idxs], depth+1)
         return Node(best_feature, best_thresh, left, right)
 
     def _best_split(self, X, y, feat_idxs):
@@ -118,12 +118,12 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         return value
 
     def predict(self, X):
-        return np.array([self._traverse_tree(x, self.root) for x in X])
+        return np.array([self._traverse_stump(x, self.root) for x in X])
 
-    def _traverse_tree(self, x, node):
+    def _traverse_stump(self, x, node):
         if node.is_leaf_node():
             return node.value
 
         if x[node.feature] <= node.threshold:
-            return self._traverse_tree(x, node.left)
-        return self._traverse_tree(x, node.right)
+            return self._traverse_stump(x, node.left)
+        return self._traverse_stump(x, node.right)
