@@ -4,31 +4,45 @@ import numpy as np
 from collections import Counter
 
 # node'y (pola decyzji - takie if'y gdzie nastepuje podzial zbioru- w pniu tylko jeden taki Node)
+
+"""
+Klasa Node definiuje gałęzie (liście) drzewa DecisionStump.
+W RandomStumpie mamy pewną ilość DecisionStumpów, a każdy DecisionStump ma w sobie pewną ilość Nodów.
+"""
+
 class Node:
     def __init__(self, feature=None, threshold=None, left=None, right=None,*,value=None): #* powoduje ze trzeba zrobic Node.value
         self.feature = feature
         self.threshold = threshold  #prog decyzyjny przy ktorym koniec decyzji o podziale
         self.left = left
         self.right = right
-        self.value = value 
-        
+        self.value = value
+
     def is_leaf_node(self): #sprawdzanie czy ten node jest lisciem
         return self.value is not None
 
+"""
+Klasa DecisionStump definiuje stumpy (pojedyncze drzewa) potrzebne do algorytmu RandomStumps.
+"""
+
 class DecisionStump (BaseEstimator, ClassifierMixin):
-    
+
     def __init__(self, min_samples_split=2, max_depth=1, n_features=None):
         self.min_samples_split=min_samples_split
         self.max_depth=max_depth
         self.n_features=n_features #randomowosc przy podzbiorach
         self.root=None
-        
+
     def fit(self, X, y):
         self.n_features = X.shape[1] if not self.n_features else min(X.shape[1],self.n_features)
         self.root = self._grow_tree(X, y)
         return self
 
-    def _grow_tree(self, X, y, depth=1):    #tworzenie drzewa, u nas drzewo jest z jedna decyzja, jeden poziom glebokosci, dlatego tez depth = 1 i tylko raz zbuduje rozgalezienia (dwa liscie)
+    """
+    Important!
+    Tutaj jest właśnie problem, czy chcemy mieć depth=0, czy depth=1???
+    """
+    def _grow_tree(self, X, y, depth=0):    #tworzenie drzewa, u nas drzewo jest z jedna decyzja, jeden poziom glebokosci, tylko raz zbuduje rozgalezienia (dwa liscie)
         n_samples, n_feats = X.shape
         n_labels = len(np.unique(y))
 
@@ -42,7 +56,7 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         # znalezienie najlepszy podzial na te *liscie*
         best_feature, best_thresh = self._best_split(X, y, feat_idxs)
 
-        # create child nodes - nie wiem czy ta czesc jest wgl potrzeban bo chyba nie ma tworzenia child node'ow, ale tez sie chyba nie stworza majac warunek ze tylko 1 poziom zrobi
+        # stworzenie rozgalezien,  z warunkiem stworzy sie tylko 1 poziom *drzewa* (pnia)
         left_idxs, right_idxs = self._split(X[:, best_feature], best_thresh)
         left = self._grow_tree(X[left_idxs, :], y[left_idxs], depth+1)
         right = self._grow_tree(X[right_idxs, :], y[right_idxs], depth+1)
@@ -76,7 +90,7 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
 
         if len(left_idxs) == 0 or len(right_idxs) == 0:
             return 0
-        
+
         # obliczanie wag wartosci entropii dzieci
         n = len(y)
         n_l, n_r = len(left_idxs), len(right_idxs)
