@@ -32,7 +32,7 @@ class RandomStumps (BaseEstimator, ClassifierMixin):
     """
     def fit(self, X, y):
         self.stumps = []
-        for _ in range(self.n_stumps):
+        for i in range(self.n_stumps):
             stump = DecisionStump(max_depth=self.max_depth,
                             min_samples_split=self.min_samples_split,
                             n_features=self.n_features)
@@ -43,6 +43,7 @@ class RandomStumps (BaseEstimator, ClassifierMixin):
 
     """
     Metoda _bootstrap_samples jest metodą pomocniczą.
+    Wybieranie losowo probek
     """
     def _bootstrap_samples(self, X, y):
         n_samples = X.shape[0]
