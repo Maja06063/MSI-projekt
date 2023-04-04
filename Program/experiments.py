@@ -22,7 +22,7 @@ class Experiments():
 
         # Wybór danych wejściowych do algorytmu:
         while True:
-            print("1.Symetryczne\n2.Realne\n3.Oba\n4.Wyjscie\n")
+            print("1.Syntetyczne\n2.Realne\n3.Oba\n4.Wyjscie\n")
             data_input = input("Które dane neleży użyć? Wciśnij 1, 2 lub 3\n")
             if data_input == "1":
                 self.data_init.prepare_artificial_data()
@@ -65,8 +65,8 @@ class Experiments():
                 algorithms_loop = False
                 print("Uruchomiono algorytm Random Stumps")
 
-                n_classes = max(y_train) + 1
-                random_stumps_algorithm = RandomStumps(n_classes)
+                n_features = len(x_train[0])
+                random_stumps_algorithm = RandomStumps(n_features)
                 random_stumps_algorithm.fit(x_train,y_train)
                 y_predict = random_stumps_algorithm.predict(x_test)
 
