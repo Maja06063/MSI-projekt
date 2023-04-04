@@ -38,6 +38,10 @@ class DecisionStump (BaseEstimator, ClassifierMixin):
         self.root = self._grow_tree(X, y)
         return self
 
+    """
+    Important!
+    Tutaj jest właśnie problem, czy chcemy mieć depth=0, czy depth=1???
+    """
     def _grow_tree(self, X, y, depth=0):    #tworzenie drzewa, u nas drzewo jest z jedna decyzja, jeden poziom glebokosci, dlatego tez depth = 1 i tylko raz zbuduje rozgalezienia (dwa liscie)
         n_samples, n_feats = X.shape
         n_labels = len(np.unique(y))
