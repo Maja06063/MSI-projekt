@@ -37,6 +37,3 @@ class DataInitializer():
     """
     def get_y_data_copy(self):
         return self.data_y.copy()
-
-
-    

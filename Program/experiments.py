@@ -22,7 +22,7 @@ class Experiments():
 
         # Wybór danych wejściowych do algorytmu:
         while True:
-            print("1.Symetryczne\n2.Realne\n3.Oba\n4.Wyjscie\n")
+            print("1.Syntetyczne\n2.Realne\n3.Oba\n4.Wyjscie\n")
             data_input = input("Które dane neleży użyć? Wciśnij 1, 2 lub 3\n")
             if data_input == "1":
                 self.data_init.prepare_artificial_data()
