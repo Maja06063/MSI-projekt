@@ -3,6 +3,7 @@ from random_stumps import RandomStumps
 from data_initializer import DataInitializer
 from sklearn.metrics import accuracy_score
 from ref_methods import RefMethods
+from show_results import ShowResults
 
 """
 Klasa Experiments służy do przeprowadzenia ekperymentów. Składa się przede wszystkim z metody run.
@@ -12,6 +13,7 @@ class Experiments():
 
     data_init = DataInitializer ()
     ref_methods = RefMethods ()
+    show_results = ShowResults ()
     def __init__(self):
         pass
 
@@ -72,6 +74,7 @@ class Experiments():
 
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji Random Stumps wynosi:"+str(score))
+                self.show_results.random_stumps_score = score
 
             # Boosting
             if "2" in data_input:
@@ -84,6 +87,7 @@ class Experiments():
 
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji Boosting wynosi:"+str(score))
+                self.show_results.boosting_score = score
 
             # Bagging:
             if "3" in data_input:
@@ -96,6 +100,7 @@ class Experiments():
 
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji Bagging wynosi:"+str(score))
+                self.show_results.bagging_score = score
 
             # Regresja logistyczna:
             if "4" in data_input:
@@ -108,3 +113,6 @@ class Experiments():
 
                 score = accuracy_score(y_test,y_predict)
                 print("Metryka klasyfikacji regresji logistycznej wynosi:"+str(score))
+                self.show_results.logistic_regression_score = score
+
+        self.show_results.write_results_to_file('../output_file')
