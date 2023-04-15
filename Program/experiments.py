@@ -65,8 +65,8 @@ class Experiments():
                 algorithms_loop = False
                 print("Uruchomiono algorytm Random Stumps")
 
-                n_features = len(x_train[0])
-                random_stumps_algorithm = RandomStumps(n_features)
+                n_classes = max(y_train) + 1
+                random_stumps_algorithm = RandomStumps(n_classes)
                 random_stumps_algorithm.fit(x_train,y_train)
                 y_predict = random_stumps_algorithm.predict(x_test)
 
