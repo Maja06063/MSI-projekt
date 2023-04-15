@@ -1,5 +1,6 @@
 from sklearn import datasets
 import pandas as pd
+from random_state import RANDOM_STATE
 
 """
 Klasa DataInitializer zawiera metody, które mają na celu przygotować dane do eksperymentów.
@@ -16,7 +17,8 @@ class DataInitializer():
     def prepare_artificial_data(self):
 
         self.data_x, self.data_y = datasets.make_classification(
-            n_samples= 500
+            n_samples= 500,
+            random_state = RANDOM_STATE
         )
 
     """

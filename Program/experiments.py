@@ -4,6 +4,7 @@ from data_initializer import DataInitializer
 from sklearn.metrics import accuracy_score
 from ref_methods import RefMethods
 from show_results import ShowResults
+from random_state import RANDOM_STATE
 
 """
 Klasa Experiments służy do przeprowadzenia ekperymentów. Składa się przede wszystkim z metody run.
@@ -49,7 +50,7 @@ class Experiments():
         x_train, x_test, y_train, y_test = train_test_split(
             data_x,data_y,
             test_size = 0.2,
-            random_state = 66
+            random_state = RANDOM_STATE
         )
 
         # Wybór algorytmu do uruchomienia:
