@@ -1,4 +1,5 @@
 from sklearn import datasets
+import pandas as pd
 
 """
 Klasa DataInitializer zawiera metody, które mają na celu przygotować dane do eksperymentów.
@@ -24,7 +25,9 @@ class DataInitializer():
     1. input_file = plik z ktorego bedziemy brac realne
     """
     def prepare_real_data(self, input_file: str):
-        pass
+        df = pd.read_csv(input_file, sep=',', header=0)
+        self.data_y = df[df.columns[-1]].to_numpy()
+        self.data_x = df[df.columns[0:-1]].to_numpy()
 
     """
     Metoda get_x_data_copy zwraca kopię tablicy cech.

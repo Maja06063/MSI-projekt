@@ -28,7 +28,7 @@ class Experiments():
                 self.data_init.prepare_artificial_data()
                 break
             elif data_input == "2":
-                self.data_init.prepare_real_data("")
+                self.data_init.prepare_real_data('../real_data.csv')
                 break
             elif data_input == "3":
                 self.data_init.prepare_artificial_data()
