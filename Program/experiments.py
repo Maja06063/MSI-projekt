@@ -5,6 +5,8 @@ from sklearn.metrics import accuracy_score
 from ref_methods import RefMethods
 from show_results import ShowResults
 from random_state import RANDOM_STATE
+from sklearn.model_selection import RepeatedStratifiedKFold
+import numpy as np
 
 """
 Klasa Experiments służy do przeprowadzenia ekperymentów. Składa się przede wszystkim z metody run.
@@ -46,12 +48,11 @@ class Experiments():
         data_x = self.data_init.get_x_data_copy()
         data_y = self.data_init.get_y_data_copy()
 
-        # Podział na zbiór uczący i testowy. Docelowo będzie zastąpiony walidacją krzyżową:
-        x_train, x_test, y_train, y_test = train_test_split(
-            data_x,data_y,
-            test_size = 0.2,
-            random_state = RANDOM_STATE
-        )
+        # Implementacja funckji do podziału za pomocą startyfikowanej wielokttonej walidacji krzyżowej 5:2
+        splits = 5
+        repeats = 2
+        rskf = RepeatedStratifiedKFold(n_splits= splits, n_repeats= repeats, random_state= RANDOM_STATE)
+        
 
         # Wybór algorytmu do uruchomienia:
         algorithms_loop = True
@@ -67,53 +68,74 @@ class Experiments():
             if "1" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm Random Stumps")
+                scores = []
+                # Podział na zbiory treningowe i testowe - walidacja krzyżowa 5:2 i przeprowadzenie testu
+                for train_index, test_index in rskf.split(data_x, data_y):
+                    x_train, x_test = data_x[train_index], data_x[test_index]
+                    y_train, y_test = data_y[train_index], data_y[test_index]
+                    n_classes = max(y_train) + 1
+                    random_stumps_algorithm = RandomStumps(n_classes)
+                    random_stumps_algorithm.fit(x_train,y_train)
+                    y_predict = random_stumps_algorithm.predict(x_test)
+                    scores.append(accuracy_score(y_test, y_predict))
 
-                n_classes = max(y_train) + 1
-                random_stumps_algorithm = RandomStumps(n_classes)
-                random_stumps_algorithm.fit(x_train,y_train)
-                y_predict = random_stumps_algorithm.predict(x_test)
-
-                score = accuracy_score(y_test,y_predict)
-                print("Metryka klasyfikacji Random Stumps wynosi:"+str(score))
-                self.show_results.random_stumps_score = score
+                mean_score = np.mean(scores)
+                std_score = np.std(scores)
+                print("Metryka dokladnosci klasyfikacji Random Stumps wynosi: %.3f (%.3f)" % (mean_score, std_score))
+                self.show_results.random_stumps_score = mean_score
 
             # Boosting
             if "2" in data_input:
                 algorithms_loop = False
+                scores = []
                 print("Uruchomiono algorytm boosting")
+                for train_index, test_index in rskf.split(data_x, data_y):
+                    x_train, x_test = data_x[train_index], data_x[test_index]
+                    y_train, y_test = data_y[train_index], data_y[test_index]
+                    boosting_algorithm = self.ref_methods.boosting
+                    boosting_algorithm.fit(x_train,y_train)
+                    y_predict = boosting_algorithm.predict(x_test)
+                    scores.append(accuracy_score(y_test, y_predict))
 
-                boosting_algorithm = self.ref_methods.boosting
-                boosting_algorithm.fit(x_train,y_train)
-                y_predict = boosting_algorithm.predict(x_test)
-
-                score = accuracy_score(y_test,y_predict)
-                print("Metryka klasyfikacji Boosting wynosi:"+str(score))
-                self.show_results.boosting_score = score
+                mean_score = np.mean(scores)
+                std_score = np.std(scores)
+                print("Metryka klasyfikacji Boosting wynosi: %.3f (%.3f)" % (mean_score, std_score))
+                self.show_results.boosting_score = mean_score
 
             # Bagging:
             if "3" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm bagging")
+                scores = []
+                for train_index, test_index in rskf.split(data_x, data_y):
+                    x_train, x_test = data_x[train_index], data_x[test_index]
+                    y_train, y_test = data_y[train_index], data_y[test_index]
+                    bagging_algorithm = self.ref_methods.bagging
+                    bagging_algorithm.fit(x_train,y_train)
+                    y_predict = bagging_algorithm.predict(x_test)
+                    scores.append(accuracy_score(y_test, y_predict))
 
-                bagging_algorithm = self.ref_methods.bagging
-                bagging_algorithm.fit(x_train,y_train)
-                y_predict = bagging_algorithm.predict(x_test)
-
-                score = accuracy_score(y_test,y_predict)
-                print("Metryka klasyfikacji Bagging wynosi:"+str(score))
-                self.show_results.bagging_score = score
+                mean_score = np.mean(scores)
+                std_score = np.std(scores)
+                print("Metryka klasyfikacji Bagging wynosi: %.3f (%.3f)" % (mean_score, std_score))
+                self.show_results.bagging_score = mean_score
 
             # Regresja logistyczna:
             if "4" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm regresji logistycznej")
+                scores = []
+                for train_index, test_index in rskf.split(data_x, data_y):
+                    x_train, x_test = data_x[train_index], data_x[test_index]
+                    y_train, y_test = data_y[train_index], data_y[test_index]
+                    log_reg_algorithm = self.ref_methods.logistic_regression
+                    log_reg_algorithm.fit(x_train,y_train)
+                    y_predict = log_reg_algorithm.predict(x_test)
+                    scores.append(accuracy_score(y_test, y_predict))
 
-                log_reg_algorithm = self.ref_methods.logistic_regression
-                log_reg_algorithm.fit(x_train,y_train)
-                y_predict = log_reg_algorithm.predict(x_test)
-
-                score = accuracy_score(y_test,y_predict)
-                print("Metryka klasyfikacji regresji logistycznej wynosi:"+str(score))
-                self.show_results.logistic_regression_score = score
+                mean_score = np.mean(scores)
+                std_score = np.std(scores)
+                print("Metryka klasyfikacji regresji logistycznej wynosi: %.3f (%.3f)" % (mean_score, std_score))
+                self.show_results.logistic_regression_score = mean_score
 
         self.show_results.write_results_to_file('../output_file')
