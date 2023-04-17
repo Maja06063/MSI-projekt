@@ -18,6 +18,10 @@ class DataInitializer():
 
         self.data_x, self.data_y = datasets.make_classification(
             n_samples= 500,
+            n_features= 2,
+            n_informative= 2,
+            n_redundant= 0,
+            n_repeated= 0,
             random_state = RANDOM_STATE
         )
 

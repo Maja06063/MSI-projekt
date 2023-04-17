@@ -50,6 +50,8 @@ class Experiments():
         data_x = self.data_init.get_x_data_copy()
         data_y = self.data_init.get_y_data_copy()
 
+        print(data_x.shape)
+
         # Implementacja funckji do podziału za pomocą startyfikowanej wielokttonej walidacji krzyżowej 5:2
         splits = 5
         repeats = 2
