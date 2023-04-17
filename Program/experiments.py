@@ -84,23 +84,26 @@ class Experiments():
                     y_predict = random_stumps_algorithm.predict(x_test)
                     scores.append(accuracy_score(y_test, y_predict))
                 
-                # Wyswietlanie prcesu nauki dla kazdego folda
-                fig0 = plt.figure('Figure 0')
-                plt.plot(iter, scores)
-                plt.title('Random Stumps metryka a foldy')
-                plt.savefig('../RS_foldy')
-                
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
                 print("Metryka dokladnosci klasyfikacji Random Stumps wynosi: %.3f (%.3f)" % (mean_score, std_score))
                 
+                # Wyswietlanie prcesu nauki dla kazdego folda
+                fig0 = plt.figure('Figure 0')
+                plt.plot(iter, scores, linestyle= "", marker="o")
+                plt.axhline(y= mean_score, color = 'r')
+                plt.title('Random Stumps metryka a foldy')
+                plt.savefig('../RS_foldy')
+
                 # Wyswietlanie subplotow dla zbiory syntetycznego dla prawdziwej etykiety (po lewej) i predykcji (po prawej)
                 if data_for_plots == "1":
                     fig1 = plt.figure('Figure 1')
                     fig, ax = plt.subplots(1,2)
                     fig.suptitle("Random Stumps")
                     ax[0].scatter(x_test[:, 0], x_test[:, 1], c= y_test, cmap= 'bwr')
+                    ax[0].set_title('Prawdziwa etykieta')
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
+                    ax[1].set_title('Predykcja klasyfikatora')
                     plt.savefig('../Random_Stumps.png') 
 
                 self.show_results.random_stumps_score = mean_score
@@ -117,17 +120,17 @@ class Experiments():
                     boosting_algorithm.fit(x_train,y_train)
                     y_predict = boosting_algorithm.predict(x_test)
                     scores.append(accuracy_score(y_test, y_predict))
-
-                # Wyswietlanie prcesu nauki dlakazdego folda
-                fig2 = plt.figure('Figure 2')
-                plt.plot(iter, scores)
-                plt.title('Boosting metryka a foldy')
-                plt.savefig('../Boost_foldy')
-                #plt.show()
                 
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
                 print("Metryka klasyfikacji Boosting wynosi: %.3f (%.3f)" % (mean_score, std_score))
+
+                # Wyswietlanie prcesu nauki dlakazdego folda
+                fig2 = plt.figure('Figure 2')
+                plt.plot(iter, scores, linestyle= "", marker="o")
+                plt.axhline(y= mean_score, color = 'r')
+                plt.title('Boosting metryka a foldy')
+                plt.savefig('../Boost_foldy')
 
                 # Wyswietlanie subplotow dla zbiory syntetycznego dla prawdziwej etykiety (po lewej) i predykcji (po prawej)
                 if data_for_plots == "1":
@@ -135,7 +138,9 @@ class Experiments():
                     fig, ax = plt.subplots(1,2)
                     fig.suptitle("Boosting")
                     ax[0].scatter(x_test[:, 0], x_test[:, 1], c= y_test, cmap= 'bwr')
+                    ax[0].set_title('Prawdziwa etykieta')
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
+                    ax[1].set_title('Predykcja klasyfikatora')
                     plt.savefig('../Boosting.png')
 
                 self.show_results.boosting_score = mean_score
@@ -153,23 +158,26 @@ class Experiments():
                     y_predict = bagging_algorithm.predict(x_test)
                     scores.append(accuracy_score(y_test, y_predict))
 
-                # Wyswietlanie prcesu nauki dla kazdego folda
-                fig4 = plt.figure('Figure 4')
-                plt.plot(iter, scores)
-                plt.title('Bagging metryka a foldy')
-                plt.savefig('../Bagg_foldy')
-
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
                 print("Metryka klasyfikacji Bagging wynosi: %.3f (%.3f)" % (mean_score, std_score))
                 
+                # Wyswietlanie prcesu nauki dla kazdego folda
+                fig4 = plt.figure('Figure 4')
+                plt.plot(iter, scores, linestyle= "", marker="o")
+                plt.axhline(y= mean_score, color = 'r')
+                plt.title('Bagging metryka a foldy')
+                plt.savefig('../Bagg_foldy')
+
                 # Wyswietlanie subplotow dla zbiory syntetycznego dla prawdziwej etykiety (po lewej) i predykcji (po prawej)
                 if data_for_plots == "1":
                     fig5 = plt.figure('Figure 5')
                     fig, ax = plt.subplots(1,2)
                     fig.suptitle("Bagging")
                     ax[0].scatter(x_test[:, 0], x_test[:, 1], c= y_test, cmap= 'bwr')
+                    ax[0].set_title('Prawdziwa etykieta')
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
+                    ax[1].set_title('Predykcja klasyfikatora')
                     plt.savefig('../Bagging.png')
                 
                 self.show_results.bagging_score = mean_score
@@ -187,23 +195,26 @@ class Experiments():
                     y_predict = log_reg_algorithm.predict(x_test)
                     scores.append(accuracy_score(y_test, y_predict))
 
-                # Wyswietlanie prcesu nauki dlakazdego folda
-                fig6 = plt.figure('Figure 6')
-                plt.plot(iter, scores)
-                plt.title('Regresja logistyczna metryka a foldy')
-                plt.savefig('../RL_foldy')
-
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
                 print("Metryka klasyfikacji regresji logistycznej wynosi: %.3f (%.3f)" % (mean_score, std_score))
                 
+                # Wyswietlanie prcesu nauki dlakazdego folda
+                fig6 = plt.figure('Figure 6')
+                plt.plot(iter, scores, linestyle= "", marker="o")
+                plt.axhline(y= mean_score, color = 'r')
+                plt.title('Regresja logistyczna metryka a foldy')
+                plt.savefig('../RL_foldy')
+
                 # Wyswietlanie subplotow dla zbiory syntetycznego dla prawdziwej etykiety (po lewej) i predykcji (po prawej)
                 if data_for_plots == "1":
                     fig7 = plt.figure('Figure 7')
                     fig, ax = plt.subplots(1,2)
                     fig.suptitle("Regresja logistyczna")
                     ax[0].scatter(x_test[:, 0], x_test[:, 1], c= y_test, cmap= 'bwr')
+                    ax[0].set_title('Prawdziwa etykieta')
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
+                    ax[1].set_title('Predykcja klasyfikatora')
                     plt.savefig('../Regresja_logistyczna.png')
                 
                 self.show_results.logistic_regression_score = mean_score
