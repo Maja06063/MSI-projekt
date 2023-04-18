@@ -30,10 +30,10 @@ class DataInitializer():
     Argumenty:
     1. input_file = plik z ktorego bedziemy brac realne
     """
-    def prepare_real_data(self, input_file: str):
+    def prepare_real_data(self, input_file: str): #odczytywanie z pliku input_file i wrzucanie do zmiennych
         df = pd.read_csv(input_file, sep=',', header=0)
-        self.data_y = df[df.columns[-1]].to_numpy()
-        self.data_x = df[df.columns[0:-1]].to_numpy()
+        self.data_y = df[df.columns[-1]].to_numpy() # do data_y bierzemy tylko ostatnią kolumnę
+        self.data_x = df[df.columns[0:-1]].to_numpy() # do data_x bierzemy wszystkie kolumny poza ostatnią
 
     """
     Metoda get_x_data_copy zwraca kopię tablicy cech.
