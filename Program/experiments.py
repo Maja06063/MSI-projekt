@@ -57,7 +57,9 @@ class Experiments():
         repeats = 2
         iter = range(1,11)
         rskf = RepeatedStratifiedKFold(n_splits= splits, n_repeats= repeats, random_state= RANDOM_STATE)
-        
+
+        clfs_scores = [] # Lista wyników (do testu T studenta)
+        clfs_names = []
 
         # Wybór algorytmu do uruchomienia:
         algorithms_loop = True
@@ -73,6 +75,7 @@ class Experiments():
             if "1" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm Random Stumps")
+                clfs_names.append("Random Stumps")
                 scores = []
                 # Podział na zbiory treningowe i testowe - walidacja krzyżowa 5:2 i przeprowadzenie testu
                 for train_index, test_index in rskf.split(data_x, data_y):
@@ -83,11 +86,12 @@ class Experiments():
                     random_stumps_algorithm.fit(x_train,y_train)
                     y_predict = random_stumps_algorithm.predict(x_test)
                     scores.append(accuracy_score(y_test, y_predict))
-                
+
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
+                clfs_scores.append(scores)
                 print("Metryka dokladnosci klasyfikacji Random Stumps wynosi: %.3f (%.3f)" % (mean_score, std_score))
-                
+
                 # Wyswietlanie prcesu nauki dla kazdego folda
                 fig0 = plt.figure('Figure 0')
                 plt.plot(iter, scores, linestyle= "", marker="o")
@@ -104,7 +108,7 @@ class Experiments():
                     ax[0].set_title('Prawdziwa etykieta')
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
                     ax[1].set_title('Predykcja klasyfikatora')
-                    plt.savefig('../Random_Stumps.png') 
+                    plt.savefig('../Random_Stumps.png')
 
                 self.show_results.random_stumps_score = mean_score
 
@@ -113,6 +117,7 @@ class Experiments():
                 algorithms_loop = False
                 scores = []
                 print("Uruchomiono algorytm boosting")
+                clfs_names.append("boosting")
                 for train_index, test_index in rskf.split(data_x, data_y):
                     x_train, x_test = data_x[train_index], data_x[test_index]
                     y_train, y_test = data_y[train_index], data_y[test_index]
@@ -120,9 +125,10 @@ class Experiments():
                     boosting_algorithm.fit(x_train,y_train)
                     y_predict = boosting_algorithm.predict(x_test)
                     scores.append(accuracy_score(y_test, y_predict))
-                
+
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
+                clfs_scores.append(scores)
                 print("Metryka klasyfikacji Boosting wynosi: %.3f (%.3f)" % (mean_score, std_score))
 
                 # Wyswietlanie prcesu nauki dlakazdego folda
@@ -149,6 +155,7 @@ class Experiments():
             if "3" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm bagging")
+                clfs_names.append("bagging")
                 scores = []
                 for train_index, test_index in rskf.split(data_x, data_y):
                     x_train, x_test = data_x[train_index], data_x[test_index]
@@ -160,8 +167,9 @@ class Experiments():
 
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
+                clfs_scores.append(scores)
                 print("Metryka klasyfikacji Bagging wynosi: %.3f (%.3f)" % (mean_score, std_score))
-                
+
                 # Wyswietlanie prcesu nauki dla kazdego folda
                 fig4 = plt.figure('Figure 4')
                 plt.plot(iter, scores, linestyle= "", marker="o")
@@ -179,13 +187,14 @@ class Experiments():
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
                     ax[1].set_title('Predykcja klasyfikatora')
                     plt.savefig('../Bagging.png')
-                
+
                 self.show_results.bagging_score = mean_score
 
             # Regresja logistyczna:
             if "4" in data_input:
                 algorithms_loop = False
                 print("Uruchomiono algorytm regresji logistycznej")
+                clfs_names.append("Regresja logistyczna")
                 scores = []
                 for train_index, test_index in rskf.split(data_x, data_y):
                     x_train, x_test = data_x[train_index], data_x[test_index]
@@ -197,8 +206,9 @@ class Experiments():
 
                 mean_score = np.mean(scores)
                 std_score = np.std(scores)
+                clfs_scores.append(scores)
                 print("Metryka klasyfikacji regresji logistycznej wynosi: %.3f (%.3f)" % (mean_score, std_score))
-                
+
                 # Wyswietlanie prcesu nauki dlakazdego folda
                 fig6 = plt.figure('Figure 6')
                 plt.plot(iter, scores, linestyle= "", marker="o")
@@ -206,7 +216,7 @@ class Experiments():
                 plt.title('Regresja logistyczna metryka a foldy')
                 plt.savefig('../RL_foldy')
 
-                # Wyswietlanie subplotow dla zbiory syntetycznego dla prawdziwej etykiety (po lewej) i predykcji (po prawej)
+                # Wyswietlanie subplotow dla zbioru syntetycznego dla prawdziwej etykiety (po lewej) i predykcji (po prawej)
                 if data_for_plots == "1":
                     fig7 = plt.figure('Figure 7')
                     fig, ax = plt.subplots(1,2)
@@ -216,7 +226,10 @@ class Experiments():
                     ax[1].scatter(x_test[:, 0], x_test[:, 1], c= y_predict, cmap= 'bwr')
                     ax[1].set_title('Predykcja klasyfikatora')
                     plt.savefig('../Regresja_logistyczna.png')
-                
+
                 self.show_results.logistic_regression_score = mean_score
 
+        alpha = float(input("Podaj istotność (alfa): "))
+
+        self.show_results.statistic_test(np.array(clfs_scores), clfs_names, alpha)
         self.show_results.write_results_to_file('../output_file')
