@@ -2,12 +2,11 @@
 Projekt pod tytułem: "Implementacja algorytmu uczenia zespołowego Random Stumps, gdzie pojedynczą składową jest pień decyzyjny (drzweo decyzyjne o jednej gałęzi - stump)"
 
 Wymagania do uruchomienia programu:
-• Python 3.9.13
-• Biblioteka Numpy
-• Biblioteka scikit-learn
-• Biblioteka matplotlib
-• Biblioteka pandas
-
+* Python 3.9.13
+* Biblioteka Numpy
+* Biblioteka scikit-learn
+* Biblioteka matplotlib
+* Biblioteka pandas
 
 
 W pliku 'real_data.csv' znajdują się dane rzeczywiste "Bank Customer Churn Dataset", pobrany z portaflu Keggle.
